@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>GlowScan AI - Face Scan</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Arial, sans-serif;
+            background: #f5f7fb;
+            text-align: center;
+            margin: 0;
+            padding: 20px;
+        }
+        .box {
+            max-width: 720px;
+            margin: 30px auto;
+            background: white;
+            padding: 25px;
+            border-radius: 15px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+        }
+        .video-stream {
+            width: 100%;
+            border-radius: 12px;
+            border: 3px solid #eee;
+            background: #000;
+        }
+        .ai-output {
+            margin-top: 15px;
+            padding: 15px;
+            background: #0b4ea2;
+            color: white;
+            border-radius: 10px;
+            font-size: 18px;
+            font-weight: bold;
+            transition: all 0.3s ease;
+        }
+        .capture-btn {
+            margin-top: 20px;
+            padding: 15px 35px;
+            font-size: 18px;
+            font-weight: bold;
+            background: #10b981;
+            color: white;
+            border: none;
+            border-radius: 30px;
+            cursor: pointer;
+            box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+            transition: transform 0.2s, background 0.2s;
+        }
+        .capture-btn:hover {
+            background: #059669;
+            transform: translateY(-2px);
+        }
+        .capture-btn:active {
+            transform: translateY(0);
+        }
+        .capture-btn:disabled {
+            background: #9ca3af;
+            cursor: not-allowed;
+            box-shadow: none;
+        }
+        .back-link {
+            display: inline-block;
+            margin-top: 20px;
+            text-decoration: none;
+            color: #6b7280;
+            font-size: 14px;
+        }
+        .loading-overlay {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(255,255,255,0.8);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+        }
+    </style>
+</head>
+<body>
+
+<div class="loading-overlay" id="loader">
+    <div style="font-size: 24px; color: #0b4ea2;">⏳ Sedang Menganalisis...</div>
+</div>
+
+<div class="box">
+    <h2>📷 GlowScan AI – Face Scan</h2>
+    <p>Pastikan wajah berada di dalam kotak hijau untuk hasil akurat.</p>
+
+    <img src="{{ url_for('video') }}" class="video-stream" alt="Video Stream">
+
+    <div class="ai-output" id="aiResult">
+        🤖 Menunggu analisis wajah...
+    </div>
+
+    <button class="capture-btn" id="btnCapture" onclick="captureGlowScan()">
+        📸 Capture & Konsultasi AI
+    </button>
+
+    <br>
+    <a href="/dashboard" class="back-link">⬅ Kembali ke Dashboard</a>
+</div>
+
+<script>
+let currentStatus = "";
+
+// Mengambil hasil deteksi real-time dari server
+setInterval(() => {
+    fetch("/hasil_ai")
+        .then(res => res.text())
+        .then(data => {
+            currentStatus = data;
+            const aiBox = document.getElementById("aiResult");
+            const btn = document.getElementById("btnCapture");
+
+            aiBox.innerText = "🤖 " + data;
+
+            // Jika wajah tidak terdeteksi, tombol di-nonaktifkan
+            if (data.includes("❌")) {
+                aiBox.style.background = "#ef4444"; // Warna merah
+                btn.disabled = true;
+            } else {
+                aiBox.style.background = "#0b4ea2"; // Warna biru asli
+                btn.disabled = false;
+            }
+        });
+}, 500);
+
+function captureGlowScan() {
+    // Tampilkan loader
+    document.getElementById("loader").style.display = "flex";
+    
+    fetch("/capture", { method: "POST" })
+        .then(res => res.json())
+        .then(data => {
+            if (data.status === "success") {
+                // Berhasil capture, langsung pindah ke halaman konsultasi
+                window.location.href = data.redirect; 
+            } else {
+                alert("❌ Gagal: " + data.message);
+                document.getElementById("loader").style.display = "none";
+            }
+        })
+        .catch(err => {
+            console.error(err);
+            alert("❌ Terjadi kesalahan jaringan.");
+            document.getElementById("loader").style.display = "none";
+        });
+}
+</script>
+
+</body>
+</html>

@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Konsultasi GlowScan AI</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #f4f6f9;
+            margin: 0;
+        }
+
+        .chat-container {
+            max-width: 800px;
+            margin: 30px auto;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            display: flex;
+            flex-direction: column;
+            height: 85vh;
+        }
+
+        .chat-header {
+            padding: 15px 20px;
+            border-bottom: 1px solid #ddd;
+            font-weight: bold;
+            font-size: 18px;
+            background: #ffffff;
+            border-radius: 15px 15px 0 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .chat-body {
+            flex: 1;
+            padding: 20px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .message {
+            max-width: 75%;
+            padding: 12px 15px;
+            border-radius: 15px;
+            margin-bottom: 15px;
+            font-size: 14px;
+            line-height: 1.6;
+            white-space: pre-line;
+            word-wrap: break-word;
+        }
+
+        .ai {
+            background: #eef2f7;
+            align-self: flex-start;
+            color: #333;
+            border-bottom-left-radius: 2px;
+        }
+
+        .user {
+            background: #007bff;
+            color: white;
+            align-self: flex-end;
+            border-bottom-right-radius: 2px;
+        }
+
+        /* Style Khusus untuk Error */
+        .error-msg {
+            background: #ffebee;
+            color: #c62828;
+            border: 1px solid #ef9a9a;
+            align-self: center;
+            text-align: center;
+            max-width: 90%;
+            font-family: monospace;
+            font-size: 12px;
+        }
+
+        .chat-footer {
+            display: flex;
+            padding: 15px;
+            border-top: 1px solid #ddd;
+            background: #fff;
+            border-radius: 0 0 15px 15px;
+        }
+
+        .chat-footer input {
+            flex: 1;
+            padding: 12px 18px;
+            border-radius: 25px;
+            border: 1px solid #ccc;
+            outline: none;
+            transition: 0.3s;
+        }
+
+        .chat-footer input:focus {
+            border-color: #007bff;
+        }
+
+        .chat-footer button {
+            margin-left: 10px;
+            width: 45px;
+            height: 45px;
+            border: none;
+            background: #007bff;
+            color: white;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 18px;
+            transition: 0.3s;
+        }
+
+        .chat-footer button:hover {
+            background: #0056b3;
+            transform: scale(1.05);
+        }
+
+        .back-link {
+            text-decoration: none;
+            color: #666;
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="chat-container">
+
+    <div class="chat-header">
+        <span>💬 Konsultasi GlowScan AI</span>
+        <a href="/dashboard" class="back-link">Kembali</a>
+    </div>
+
+    <div class="chat-body" id="chat-box">
+
+        <div class="message ai">
+            Halo 👋 Saya GlowScan AI. 
+            Ada yang bisa saya bantu terkait perawatan kulit wajah Anda?
+        </div>
+
+        {% if error_detail %}
+        <div class="message error-msg">
+            <strong>DEBUG ERROR:</strong><br>
+            {{ error_detail }}
+        </div>
+        {% endif %}
+
+        {% if jawaban %}
+        <div class="message ai">
+            {{ jawaban }}
+        </div>
+        {% endif %}
+
+    </div>
+
+    <form method="POST" class="chat-footer">
+        <input type="text" name="pertanyaan" placeholder="Tulis pertanyaan kamu..." required autocomplete="off">
+        <button type="submit">➤</button>
+    </form>
+
+</div>
+
+<script>
+    // Automatis scroll ke bawah saat ada pesan baru
+    var chatBox = document.getElementById("chat-box");
+    chatBox.scrollTop = chatBox.scrollHeight;
+</script>
+
+</body>
+</html>
