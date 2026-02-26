@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <title>Admin Dashboard - GlowScan AI</title>
+    <style>
+        body { font-family: 'Segoe UI', Arial; background: #f0f2f5; margin: 0; padding: 20px; }
+        .container { max-width: 1100px; margin: auto; }
+        .header { background: #0b4ea2; color: white; padding: 20px; border-radius: 10px; margin-bottom: 20px; display: flex; justify-content: space-between; align-items: center; }
+        .card { background: white; padding: 20px; border-radius: 10px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); margin-bottom: 20px; }
+        h3 { border-bottom: 2px solid #eee; padding-bottom: 10px; color: #333; }
+        table { width: 100%; border-collapse: collapse; margin-top: 10px; background: white; }
+        th, td { padding: 12px; border: 1px solid #ddd; text-align: left; }
+        th { background: #f8f9fa; color: #555; }
+        .badge { padding: 4px 8px; border-radius: 4px; font-size: 12px; font-weight: bold; }
+        .badge-admin { background: #dcfce7; color: #166534; }
+        .badge-user { background: #e0f2fe; color: #075985; }
+        .btn-delete { background: #ef4444; color: white; padding: 6px 12px; text-decoration: none; border-radius: 4px; font-size: 13px; }
+        .btn-delete:hover { background: #dc2626; }
+        .logout-btn { color: white; text-decoration: none; border: 1px solid white; padding: 8px 15px; border-radius: 5px; }
+        tr:hover { background-color: #f9fafb; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="header">
+        <h2>🛠 GlowScan Admin Panel</h2>
+        <div>
+            <a href="/dashboard" style="color:white; margin-right:20px; text-decoration:none;">🏠 Dashboard</a>
+            <a href="/logout" class="logout-btn">Keluar</a>
+        </div>
+    </div>
+
+    <div class="card">
+        <h3>👥 Manajemen Pengguna</h3>
+        <table>
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Username</th>
+                    <th>Role</th>
+                    <th>Aksi</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for user in users %}
+                <tr>
+                    <td>{{ user.id }}</td>
+                    <td><strong>{{ user.username }}</strong></td>
+                    <td>
+                        <span class="badge {{ 'badge-admin' if user.role == 'admin' else 'badge-user' }}">
+                            {{ user.role.upper() }}
+                        </span>
+                    </td>
+                    <td>
+                        {% if user.role != 'admin' %}
+                        <a href="/admin/hapus_user/{{ user.id }}" class="btn-delete" onclick="return confirm('Hapus user ini?')">Hapus</a>
+                        {% else %}
+                        <small style="color:#999">Tidak dapat dihapus</small>
+                        {% endif %}
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <div class="card">
+        <h3>📜 Riwayat Scan & Aktivitas User</h3>
+        <p><small>*Menampilkan riwayat scan terakhir yang masuk ke sistem.</small></p>
+        <table>
+            <thead>
+                <tr>
+                    <th>Waktu</th>
+                    <th>Username</th>
+                    <th>Hasil Scan / Kondisi Kulit</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for h in history %}
+                <tr>
+                    <td>{{ h.tanggal }}</td>
+                    <td><strong>{{ h.username }}</strong></td>
+                    <td>{{ h.hasil_scan }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+</body>
+</html>
